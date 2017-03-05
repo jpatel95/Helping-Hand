@@ -5,6 +5,7 @@ import twilio.twiml
 import re
 import firebase
 import requests
+import json
 
 app = Flask(__name__)
 
@@ -53,7 +54,7 @@ def parse_message(message):
 
 def get_database_results(category, city):
     r = requests.get("https://helping-hand-c061d.firebaseio.com/events.json")
-    events_found = r.text
+    events_found = json.loads(r.text)
     events_to_return = []
 
     for key, value in events_found.iteritems():
@@ -67,7 +68,7 @@ def get_database_results(category, city):
     return_str = ""
     count = 1
     for event in events_to_return:
-        return_str += (str(count) + "\nEvent Name: " + event["eventName"] + "\nDate: " + 
+        return_str += (str(count) + ".\nEvent Name: " + event["eventName"] + "\nDate: " + 
         			event["date"] + "\nTime: " + event["startTime"] + " - " + event["endTime"] + 
         			"\nDescription: " + event["description"] + "\nLocation: " + event["address"] + "\n\n")
         count += 1
