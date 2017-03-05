@@ -8,49 +8,51 @@ import requests
 
 app = Flask(__name__)
 
-categories = set()
-categories.add("food")
-categories.add("hospitality")
-categories.add("health")
-categories.add("other")
+categories = ["food", "hospitality", "room", "shelter", "housing", "health"]
 
 
 @app.route("/", methods=['GET', 'POST'])
 def respond():
-    """Respond and greet the caller by name."""
 
     request_body = request.values.get('Body', None)
-    request_city = request.values.get('FromCity', None)
+    if(request_body == None):
+        resp = twilio.twiml.Response()
+        resp.message("Please send a text like: \"Show me food in San Jose\"")
+        return
 
-    if(request_body != None):
-    	#Parse the request
-    	tokens_list = re.split("[, .!?]", request_body)
-    	tokens = set([x.lower() for x in tokens_list])
-    	print tokens
-
-    	current_category = "other"
-    	for category in categories:
-    		if(category in tokens):
-    			current_category = category
-
-
-
-
-
-    regex = re.compile('(^\w+\s+\d+\s\d+:\d+:\d+ )([\w_-]+ )(\d+\.\d+\.\d+\.\d+)( MACAUTH: Port )(\d+\/\d+\/\d+)( Mac )([0-9a-fA-F]{4}\.[0-9a-fA-F]{4}\.[0-9a-fA-F]{4})( - authentication failed.*)')
-    
-    from_number = request.values.get('From', None)
-    from_message = request.values.get('message', None)
-
-    message = "Monkey, thanks for the message!"
+    (request_category, request_city) = parse_message(request_body)
+    message = get_database_results(request_category, request_city)
 
     resp = twilio.twiml.Response()
     resp.message(message)
 
     return str(resp)
 
- def get_database_results(category, city):
-    r = request.get("https://helping-hand-c061d.firebaseio.com/events.json")
+def parse_message(message):
+    tokens_list = re.split("[, .!?]", message)
+    tokens = [x.lower() for x in tokens_list]
+    print tokens
+
+    current_category = "other"
+    cityFlag = 0
+    city = ""
+
+    for token in tokens:
+	    if token in categories:
+		    current_category = token
+		    if token == "room" or token == "shelter" or token == "housing":
+			    current_category = "hospitality"
+	    elif token == "in":
+		    cityFlag = 1
+	    elif cityFlag == 1:
+		    city += (token + " ")
+
+    city = city[:-1]
+
+    return (current_category, city)
+
+def get_database_results(category, city):
+    r = requests.get("https://helping-hand-c061d.firebaseio.com/events.json")
     events_found = r.text
     events_to_return = []
 
@@ -59,16 +61,25 @@ def respond():
     		events_to_return.append(value)
     	elif category == value["category"] and city.lower() in value["address"].lower():
     		events_to_return.append(value)
+    	if(len(events_to_return)>=3):
+    		break
 
-    return events_to_return
+    return_str = ""
+    count = 1
+    for event in events_to_return:
+        return_str += (str(count) + "\nEvent Name: " + event["eventName"] + "\nDate: " + 
+        			event["date"] + "\nTime: " + event["startTime"] + " - " + event["endTime"] + 
+        			"\nDescription: " + event["description"] + "\nLocation: " + event["address"] + "\n\n")
+        count += 1
 
+    return return_str
 
-
+ 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
 
 
-
+    """
     CombinedMultiDict([ImmutableMultiDict([]),
     	ImmutableMultiDict([('FromZip', u'95148'), ('From', u'+14088237153'),
     		('SmsMessageSid', u'SMf494a28da3f1eebd30fb8df6d845c605'),
@@ -79,6 +90,7 @@ if __name__ == "__main__":
     		('FromState', u'CA'), ('FromCountry', u'US'), ('Body', u'Hi'), 
     		('MessageSid', u'SMf494a28da3f1eebd30fb8df6d845c605'),
     	('SmsStatus', u'received'), ('ToZip', u''), ('ToCountry', u'US'), ('ToState', u'CA')])])
+    """
 
 
 
