@@ -140,6 +140,8 @@ function addEvent(myData) {
 	var eventDate = myData.date;
 	var eventRSVP = myData.a;
 
+	console.log(business.image_url)
+
 	var appendStr = '<li class="event" data-toggle="modal" data-target="#myModal" id="'+eventUID+'">\
 	<p style="font-size:1.3em;">' + eventName + '</p><br>\
 	<p>' + business.name + '<br> <p>'+eventDate+'&emsp; Attendees: '+eventRSVP+'</p></p>\
@@ -164,9 +166,7 @@ function addEvent(myData) {
 	        		'<h5 class="center">Start: '+info.startTime+'&emsp; End: '+ info.endTime+'</h5>'+
 	        		'<h5 class="center">'+info.address+'</h5>' +
 	        		'<div class="center"><img src="' + business.image_url +'" height="100" width="100"/></div><hr>'+
-	        		'<h4 class="center">'+info.description+'</h4>'+
 	        		'<h4 class="center">'+info.description+'</h4>';
-
 	    }, function (errorObject) {
 	        console.log("The read failed inside explore list event click " + errorObject.code);
 	    });
