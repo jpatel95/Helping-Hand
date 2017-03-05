@@ -145,7 +145,7 @@ function addEvent(myData) {
 	var appendStr = '<li class="event" data-toggle="modal" data-target="#myModal" id="'+eventUID+'">\
 	<p style="font-size:1.3em;">' + eventName + '</p><br>\
 	<p>' + business.name + '<br> <p>'+eventDate+'&emsp; Attendees: '+eventRSVP+'</p></p>\
-	<div class="myImageDiv"><img class="event_img" src="' + business.image_url +'" /></div>\
+	<div class="myImageDiv"><img class="event_img" alt="'+ business.name +'" src="' + business.image_url +'" /></div>\
 	<div class="event_info">'
 	+ getRating(business) +
 	'</div>\
@@ -165,7 +165,7 @@ function addEvent(myData) {
 	        		'<h5 class="center">Date: '+info.date+'</h5>'+
 	        		'<h5 class="center">Start: '+info.startTime+'&emsp; End: '+ info.endTime+'</h5>'+
 	        		'<h5 class="center">'+info.address+'</h5>' +
-	        		'<div class="center"><img src="' + business.image_url +'" height="100" width="100"/></div><hr>'+
+	        		'<div class="center"><img alt="'+ business.name +'" src="' + business.image_url +'" height="100" width="100"/></div><hr>'+
 	        		'<h4 class="center">'+info.description+'</h4>';
 	    }, function (errorObject) {
 	        console.log("The read failed inside explore list event click " + errorObject.code);
@@ -196,7 +196,7 @@ function getRating(business) {
 function sortByDate(){
 	console.log(events);
 	events = events.sort(function(a1, b1) {
-	    return  b1.date > a1.date;
+	    return  b1.date <= a1.date;
 	});
 	console.log(events);
 	$('#events').html(""); //Removes events

@@ -202,7 +202,7 @@ function getRating(business) {
 function sortByDate(){
 	console.log(events);
 	events = events.sort(function(a1, b1) {
-	    return  b1.date < a1.date;
+	    return  b1.date <= a1.date;
 	});
 
 	console.log(events);
