@@ -5,7 +5,7 @@ html, body {
 
 .container-fluid{
     background-color: rgba(0, 0, 0, .9);
-    background-image: url(../img/background.jpg);
+    background-image: url(../img/wood.jpg);
 }
 
 body {
@@ -25,6 +25,7 @@ header {
 h1 {
 	font-size: 3.5em;
 	margin: 0px;
+	display: inline-block;
 }
 
 p{
@@ -116,18 +117,18 @@ h2 {
 }
 
 .icon {
-	height: 40px;
+	height: 30px;
 	width: auto;
 }
 
+.banner {
+	margin-top: 25px;
+}
+
 #logout {
-	position: fixed;
-	right: 20px;
-	margin-top: 20px;
+	float: right;
 }
 
 #addEvent {
-	position: fixed;
-	margin-left: 20px;
-	margin-top: 20px;
+	float: left;
 }
